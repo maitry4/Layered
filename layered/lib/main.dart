@@ -1,34 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:layered/core/router/app_router.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const LayeredApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class LayeredApp extends StatelessWidget {
+  const LayeredApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        
-        child: Text("Layered")
-      ),
-      
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'Layered',
+      routerConfig: appRouter,
     );
   }
 }
