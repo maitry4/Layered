@@ -34,18 +34,19 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   Future<void> _persistSeenFlag() async {
     try {
-      final box = await Hive.openBox<bool>(_kOnboardingBox);
+      // Box is guaranteed open — Hive.initFlutter() + openBox() called in main().
+      final box = Hive.box<bool>(_kOnboardingBox);
       await box.put(_kSeenOnboardingKey, true);
     } catch (_) {
       // Persistence failure must never block navigation.
-      // Issue #6 will harden this once Hive is fully initialised at app start.
     }
   }
 
   /// Called by [SplashCubit] to check whether onboarding has been seen.
-  static Future<bool> hasSeenOnboarding() async {
+  static bool hasSeenOnboarding() {
     try {
-      final box = await Hive.openBox<bool>(_kOnboardingBox);
+      // Box is guaranteed open — safe to access synchronously.
+      final box = Hive.box<bool>(_kOnboardingBox);
       return box.get(_kSeenOnboardingKey, defaultValue: false) ?? false;
     } catch (_) {
       return false;

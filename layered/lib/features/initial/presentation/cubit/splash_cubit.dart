@@ -23,15 +23,12 @@ class SplashCubit extends Cubit<SplashState> {
       final screenWidth = MediaQuery.sizeOf(context).width;
       final asset = _resolveAsset(screenWidth);
 
-      // Run image precache and Hive flag check concurrently
-      final results = await Future.wait([
-        precacheImage(AssetImage(asset), context).then((_) => true),
-        OnboardingCubit.hasSeenOnboarding(),
-      ]);
+      // Hive box is already open — read is synchronous, only precache is async.
+      await precacheImage(AssetImage(asset), context);
 
       if (isClosed) return;
 
-      final hasSeenOnboarding = results[1];
+      final hasSeenOnboarding = OnboardingCubit.hasSeenOnboarding();
       final targetRoute =
           hasSeenOnboarding ? AppRoutes.gameMap : AppRoutes.onboarding;
 
