@@ -1,5 +1,5 @@
 name: layered
-description: "A new Flutter project."
+description: "A cross-platform relaxing puzzle game that challenges players to sort fruit slabs into bottles following stacking rules across 100 progressively difficult levels — fully offline."
 
 publish_to: 'none' 
 
