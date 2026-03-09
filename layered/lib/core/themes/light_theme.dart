@@ -11,7 +11,8 @@ final ThemeData lightTheme = ThemeData(
     onPrimary:        AppColors.white,
     primaryContainer: AppColors.green100,
     onPrimaryContainer: AppColors.green900,
-
+    primaryFixed: AppColors.green500,
+    
     secondary:        AppColors.orange500,
     onSecondary:      AppColors.white,
     secondaryContainer: AppColors.orange100,
