@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:layered/core/responsive/responsive_config.dart';
 import 'package:layered/core/router/app_routes.dart';
-import 'package:layered/features/initial/presentation/cubit/onboarding_cubit.dart';
+import 'package:layered/core/services/hive_service.dart';
 
 part 'splash_state.dart';
 
@@ -23,14 +23,13 @@ class SplashCubit extends Cubit<SplashState> {
       final screenWidth = MediaQuery.sizeOf(context).width;
       final asset = _resolveAsset(screenWidth);
 
-      // Hive box is already open — read is synchronous, only precache is async.
       await precacheImage(AssetImage(asset), context);
 
       if (isClosed) return;
 
-      final hasSeenOnboarding = OnboardingCubit.hasSeenOnboarding();
-      final targetRoute =
-          hasSeenOnboarding ? AppRoutes.gameMap : AppRoutes.onboarding;
+      final targetRoute = HiveService.instance.hasSeenOnboarding
+          ? AppRoutes.gameMap
+          : AppRoutes.onboarding;
 
       emit(SplashReady(assetPath: asset, targetRoute: targetRoute));
     } catch (e) {
