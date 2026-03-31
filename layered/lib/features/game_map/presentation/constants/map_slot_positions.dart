@@ -11,11 +11,11 @@ import 'package:flutter/material.dart';
 
 /// Mobile slot positions (portrait / narrow screens).
 const List<Offset> kSlotsMobile = [
-  Offset(0.30, 0.69), // slot 0 — bottom-right     (lv 1, 6, 11 …)
-  Offset(0.60, 0.60), // slot 1 — mid-right
-  Offset(0.32, 0.40), // slot 2 — mid-right upper
-  Offset(0.50, 0.33), // slot 3 — mid-left
-  Offset(0.71, 0.24), // slot 4 — lower-left
+  Offset(0.24, 0.69), 
+  Offset(0.60, 0.60), 
+  Offset(0.32, 0.40), 
+  Offset(0.59, 0.33), 
+  Offset(0.81, 0.28), 
 ];
 
 /// Desktop slot positions (landscape / wide screens).

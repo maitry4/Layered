@@ -26,9 +26,12 @@ final appRouter = GoRouter(
       builder: (context, state) => const GameMapScreen(),
     ),
     GoRoute(
-      path: AppRoutes.gamePlay,
-      name: AppRoutes.gamePlay,
-      builder: (context, state) => const GamePlayScreen(),
-    ),
+  path: AppRoutes.gamePlay,
+  name: AppRoutes.gamePlay,
+  builder: (context, state) {
+    final level = int.tryParse(state.uri.queryParameters['level'] ?? '') ?? 1;
+    return GamePlayScreen(levelNumber: level);
+  },
+),
   ],
 );

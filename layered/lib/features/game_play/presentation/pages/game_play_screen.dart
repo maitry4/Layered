@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 class GamePlayScreen extends StatelessWidget {
-  const GamePlayScreen({super.key});
+  final int levelNumber;
+
+  const GamePlayScreen({super.key, required this.levelNumber});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child:Text("Game play")),
+      body: Center(child: Text("Level $levelNumber")),
     );
   }
 }
