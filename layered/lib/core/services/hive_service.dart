@@ -8,14 +8,17 @@ class HiveService {
   HiveService._();
   static final HiveService instance = HiveService._();
 
-  // ── Box names ────────────────────────────────────────────────────────────
+  // ── Box names ─────────────────────────────────────────────────────────────
   static const _kOnboardingBox = 'onboarding';
+  static const _kProgressBox   = 'progress';
 
-  // ── Box keys ─────────────────────────────────────────────────────────────
+  // ── Box keys ──────────────────────────────────────────────────────────────
   static const _kSeenOnboardingKey = 'has_seen_onboarding';
+  static const _kUnlockedUpToKey   = 'unlocked_up_to';
 
   // ── Internal box references ───────────────────────────────────────────────
   late final Box<bool> _onboardingBox;
+  late final Box<int>  _progressBox;
 
   // ── Initialisation ────────────────────────────────────────────────────────
 
@@ -24,6 +27,7 @@ class HiveService {
     await Hive.initFlutter();
     final self = HiveService.instance;
     self._onboardingBox = await Hive.openBox<bool>(_kOnboardingBox);
+    self._progressBox   = await Hive.openBox<int>(_kProgressBox);
   }
 
   // ── Onboarding ────────────────────────────────────────────────────────────
@@ -33,4 +37,22 @@ class HiveService {
 
   Future<void> markOnboardingSeen() =>
       _onboardingBox.put(_kSeenOnboardingKey, true);
+
+  // ── Progress ──────────────────────────────────────────────────────────────
+
+  /// Returns the highest level the player has unlocked (1-based).
+  /// Defaults to 1 so the first level is always available.
+  int get unlockedUpTo =>
+      _progressBox.get(_kUnlockedUpToKey, defaultValue: 1) ?? 1;
+
+  /// Call after a level is completed to unlock the next one.
+  Future<void> unlockNextLevel(int completedLevel) async {
+    if (completedLevel >= unlockedUpTo) {
+      await _progressBox.put(_kUnlockedUpToKey, completedLevel + 1);
+    }
+  }
+
+  /// Wipes all progress. Used for dev / reset flows.
+  Future<void> resetProgress() =>
+      _progressBox.put(_kUnlockedUpToKey, 1);
 }
