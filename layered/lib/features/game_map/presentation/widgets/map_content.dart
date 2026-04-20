@@ -34,8 +34,8 @@ class _MapContentState extends State<MapContent> {
   }
 
   String _bgAsset(BuildContext context) => Responsive.isMobile(context)
-      ? 'assets/game_map_background_mobile.webp'
-      : 'assets/game_map_background_desktop.webp';
+      ? 'assets/map/game_map_background_mobile.webp'
+      : 'assets/map/game_map_background_desktop.webp';
 
   @override
   Widget build(BuildContext context) {

@@ -30,3 +30,8 @@ flutter:
 
   assets:
     - assets/
+    - assets/fruits/
+    - assets/map/
+    - assets/onboarding/
+    - assets/play/
+    - assets/splash/
