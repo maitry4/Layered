@@ -99,7 +99,7 @@ class _GamePlayBoard extends StatelessWidget {
 
 class _BottleWidget extends StatelessWidget {
   final Tube tube;
-  static const String _emptyBottleAsset = 'assets/play/empty_bottle.webp';
+  static const String _emptyBottleAsset = 'assets/play/empty_bottle_image.webp';
 
   const _BottleWidget({required this.tube});
 
