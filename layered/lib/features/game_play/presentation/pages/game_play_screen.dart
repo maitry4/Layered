@@ -65,15 +65,7 @@ class GamePlayScreen extends StatelessWidget {
                       ),
                   },
                   
-                  // Optional: Back button
-                  Positioned(
-                    top: 40,
-                    left: 16,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-                      onPressed: () => context.pop(),
-                    ),
-                  ),
+                  
                 ],
               );
             },
@@ -109,7 +101,7 @@ class GamePlayScreen extends StatelessWidget {
             onPressed: () {
               // Close dialog and navigate to next level
               Navigator.of(dialogContext).pop();
-              context.pushReplacement('/game-play?level=${currentLevel + 1}');
+              context.pushReplacement('/game-map');
             },
             child: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
