@@ -9,40 +9,25 @@ import 'package:layered/features/game_play/domain/ui_level.dart';
 
 class LevelGenerator {
   static const int _tubeCapacity = 4;
-  static const int _maxSeedOffsets = 10;
-  static const int _maxAttempts = 1200;
+  static const int _maxSeedOffsets = 30; // more retries for hard boards
+  static const int _maxAttempts = 5000;  // more scramble attempts
 
-  // ---------------------------------------------------------------------------
-  // Number of empty (buffer) tubes scales with color count so that the
-  // scrambler always has enough breathing room to complete its target mixes.
-  //
-  //   ≤ 4 colors  →  2 empty tubes  (5–6  total)
-  //   5–6 colors  →  3 empty tubes  (8–9  total)
-  //   7–8 colors  →  4 empty tubes  (11–12 total)
-  //
-  // Previously this was a hard-coded constant of 2, which caused the scrambler
-  // to deadlock on levels 11+ where more colors fill tubes much faster, leaving
-  // zero valid moves on the generated board.
-  // ---------------------------------------------------------------------------
+  // Only 1 extra empty tube for most difficulties.
+  // High color counts need 2 to keep the puzzle solvable.
   static int _numEmptyTubes(int numColors) {
-    if (numColors <= 4) return 2;
-    if (numColors <= 6) return 3;
-    return 4;
+    if (numColors >= 7) return 2;
+    return 1;
   }
 
-  // ---------------------------------------------------------------------------
-  // Difficulty scaling
-  //
-  //  numColors : starts at 3, +1 every 10 levels, capped at 8
-  //  numMixes  : starts at 12, scales to 67 by level 100
-  // ---------------------------------------------------------------------------
+  // Difficulty scaling:
+  //   numColors : 3 at level 1, +1 every 5 levels, capped at 8
+  //   numMixes  : 60 at level 1 → 200 at level 100
   static ({int numColors, int numMixes}) _getParams(int levelNumber) {
-    int numColors = 3 + (levelNumber - 1) ~/ 10;
+    int numColors = 3 + (levelNumber - 1) ~/ 5;
     if (numColors > 8) numColors = 8;
 
-    final double scrambleFactor =
-        ((levelNumber - 1) / 99.0).clamp(0.0, 1.0);
-    final int numMixes = (12 + scrambleFactor * 55).toInt();
+    final double t = ((levelNumber - 1) / 99.0).clamp(0.0, 1.0);
+    final int numMixes = (60 + t * 140).toInt();
 
     return (numColors: numColors, numMixes: numMixes);
   }
@@ -53,8 +38,6 @@ class LevelGenerator {
     return nonEmpty.every((t) => t.isComplete);
   }
 
-  // Returns true when no legal pour exists — a deadlocked board is unplayable
-  // even though it is not technically "solved".
   static bool _isDeadlocked(List<List<FruitType>> tubes, int capacity) {
     final n = tubes.length;
     for (int si = 0; si < n; si++) {
@@ -62,19 +45,33 @@ class LevelGenerator {
       if (src.isEmpty) continue;
       final color = src.last;
       for (int ti = 0; ti < n; ti++) {
-        if (si == ti) continue;
+        if (ti == si) continue;
         final tgt = tubes[ti];
         if (tgt.length >= capacity) continue;
         if (tgt.isNotEmpty && tgt.last != color) continue;
-        return false; // at least one valid move exists
+        return false;
       }
     }
     return true;
   }
 
-  // ---------------------------------------------------------------------------
-  // Main entry point
-  // ---------------------------------------------------------------------------
+  // Homogeneity: 0.0 = perfectly mixed, 1.0 = perfectly sorted.
+  // We reject boards above 0.75 (too easy).
+  static double _homogeneity(List<List<FruitType>> tubes) {
+    final nonEmpty = tubes.where((t) => t.isNotEmpty).toList();
+    if (nonEmpty.isEmpty) return 1.0;
+
+    double total = 0.0;
+    for (final tube in nonEmpty) {
+      final counts = <FruitType, int>{};
+      for (final s in tube) counts[s] = (counts[s] ?? 0) + 1;
+      final maxCount = counts.values.reduce((a, b) => a > b ? a : b);
+      total += maxCount / tube.length;
+    }
+    return total / nonEmpty.length;
+  }
+
+  // ── Main entry point ──────────────────────────────────────────────
   static UILevel generate(int levelNumber) {
     final params = _getParams(levelNumber);
     final int C = params.numColors;
@@ -83,77 +80,85 @@ class LevelGenerator {
     final int N = C + E;
 
     for (int seedOffset = 0; seedOffset < _maxSeedOffsets; seedOffset++) {
-      final random = Random(levelNumber * 1000 + seedOffset);
+      final random = Random(levelNumber * 997 + seedOffset * 31);
 
-      // 1. Create K slabs of each color and shuffle
-      final List<FruitType> slabs = [];
+      // 1. Create K slabs of each color — start fully sorted
+      final List<FruitType> allSlabs = [];
       for (int i = 0; i < C; i++) {
         for (int j = 0; j < K; j++) {
-          slabs.add(FruitType.values[i]);
+          allSlabs.add(FruitType.values[i]);
         }
       }
-      _shuffle(slabs, random);
 
-      // 2. Distribute shuffled slabs into C filled tubes + E empty tubes
+      // 2. DEEP SLAB SHUFFLE — scramble every individual slab
+      //    across all positions before distributing into tubes.
+      _shuffle(allSlabs, random);
+
+      // 3. Distribute into C filled tubes + E empty tubes
       List<List<FruitType>> tubes = [];
       int idx = 0;
       for (int i = 0; i < C; i++) {
-        tubes.add(List<FruitType>.from(slabs.sublist(idx, idx + K)));
+        tubes.add(List<FruitType>.from(allSlabs.sublist(idx, idx + K)));
         idx += K;
       }
       for (int i = 0; i < E; i++) {
         tubes.add([]);
       }
 
-      // 3. Scramble via valid pours
-      //    The extra empty tubes keep the move space open long enough for the
-      //    scrambler to reach its full numMixes target even at 8 colors.
+      // 4. SINGLE-SLAB pour-scramble with anti-sort bias
       int successful = 0;
       int attempts = 0;
       while (successful < params.numMixes && attempts < _maxAttempts) {
         attempts++;
         final srcI = random.nextInt(N);
-        final tgtI = random.nextInt(N);
-        if (srcI == tgtI) continue;
+        final tgtIdx = random.nextInt(N);
+        if (srcI == tgtIdx) continue;
 
         final src = tubes[srcI];
-        final tgt = tubes[tgtI];
+        final tgt = tubes[tgtIdx];
         if (src.isEmpty || tgt.length >= K) continue;
 
         final color = src.last;
+
+        // Only allow pour onto matching color or empty — game rules
         if (tgt.isNotEmpty && tgt.last != color) continue;
+        // 🔥 NEW FIX — preserve required empty tubes
+int emptyCount = tubes.where((t) => t.isEmpty).length;
 
-        // Count the contiguous top-block of this color
-        int blockSize = 1;
-        for (int i = src.length - 2; i >= 0; i--) {
-          if (src[i] == color) {
-            blockSize++;
-          } else {
-            break;
-          }
+// If target is empty, make sure we don't consume the last required empty tubes
+if (tgt.isEmpty && emptyCount <= E) {
+  continue;
+}
+        // Anti-sort: reject if this would complete a tube
+        // (all remaining slabs in tgt would be the same color as `color`
+        //  AND tgt is about to hit capacity)
+        if (tgt.length == K - 1 &&
+            tgt.isNotEmpty &&
+            tgt.every((s) => s == color)) {
+          continue; // skip moves that sort a tube during scrambling
         }
 
-        final pourAmt =
-            blockSize < (K - tgt.length) ? blockSize : (K - tgt.length);
-        for (int p = 0; p < pourAmt; p++) {
-          tgt.add(src.removeLast());
-        }
+        // Pour exactly ONE slab
+        tgt.add(src.removeLast());
         successful++;
       }
 
-      // 4. Randomise display order
+      // 5. Randomise display order
       _shuffleTubes(tubes, random);
 
-      // Convert to immutable Tube objects
       final tubeObjects = tubes
           .map((t) => Tube(capacity: K, slabs: List<FruitType>.from(t)))
           .toList();
 
-      // Skip if accidentally solved
+      // Reject if accidentally solved
       if (_isAlreadySolved(tubeObjects)) continue;
 
-      // Skip if deadlocked (no legal move exists) — previously undetected
+      // Reject if deadlocked
       if (_isDeadlocked(tubes, K)) continue;
+
+      // Reject if board is still too homogeneous (too easy)
+      final h = _homogeneity(tubes);
+      if (h > 0.75) continue;
 
       return UILevel(
         levelNumber: levelNumber,
@@ -162,13 +167,11 @@ class LevelGenerator {
       );
     }
 
-    // Should never be reached with the scaled empty-tube count
     throw StateError(
-      'Could not generate a valid unsolved puzzle for level $levelNumber',
+      'Could not generate a valid hard puzzle for level $levelNumber',
     );
   }
 
-  // Fisher-Yates shuffle for List<FruitType>
   static void _shuffle(List<FruitType> list, Random random) {
     for (int i = list.length - 1; i > 0; i--) {
       final j = random.nextInt(i + 1);
@@ -178,7 +181,6 @@ class LevelGenerator {
     }
   }
 
-  // Fisher-Yates shuffle for List<List<FruitType>>
   static void _shuffleTubes(List<List<FruitType>> list, Random random) {
     for (int i = list.length - 1; i > 0; i--) {
       final j = random.nextInt(i + 1);
