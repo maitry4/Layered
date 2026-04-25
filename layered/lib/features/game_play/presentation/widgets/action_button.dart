@@ -3,7 +3,7 @@ class ActionButton extends StatelessWidget {
   final String? label;
   final Widget? child;
   final VoidCallback onTap;
-  const ActionButton({this.label, this.child, required this.onTap});
+  const ActionButton({super.key, this.label, this.child, required this.onTap});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

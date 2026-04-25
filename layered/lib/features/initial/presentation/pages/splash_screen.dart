@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:layered/core/responsive/responsive_config.dart';
 import 'package:layered/features/initial/presentation/cubit/splash_cubit.dart';
 
 class SplashScreen extends StatelessWidget {

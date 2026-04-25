@@ -13,7 +13,7 @@ import 'package:layered/features/game_play/presentation/widgets/round_button.dar
 class GamePlayBoard extends StatelessWidget {
   final UILevel level;
   final int? selectedIdx;
-  const GamePlayBoard({required this.level, this.selectedIdx});
+  const GamePlayBoard({super.key, required this.level, this.selectedIdx});
 
   @override
   Widget build(BuildContext context) {
@@ -51,16 +51,13 @@ class GamePlayBoard extends StatelessWidget {
         
         final crossAxisCount = isMobile ? 5 :level.tubes.length;
 
-        // Control spacing here
-        // const spacing = 2.0;
-
         // Calculate exact width needed for grid
         final itemWidth = constraints.maxWidth / crossAxisCount;
         final gridWidth =
             (itemWidth * crossAxisCount) - (0.0 * (crossAxisCount - 1));
 
         return SizedBox(
-          width: gridWidth * 0.8, // 👈 shrink width to center items nicely
+          width: gridWidth * 0.8, // shrink width to center items nicely
           child: GridView.builder(
             shrinkWrap: true,
             itemCount: level.tubes.length,
@@ -68,7 +65,7 @@ class GamePlayBoard extends StatelessWidget {
               crossAxisCount: crossAxisCount,
               mainAxisExtent: isMobile ? 190 : 350,
               mainAxisSpacing: 20,
-              crossAxisSpacing: 1.0, // 👈 reduced gap
+              crossAxisSpacing: 1.0, // reduced gap
               childAspectRatio: 0.5,
             ),
             itemBuilder: (context, index) => GestureDetector(

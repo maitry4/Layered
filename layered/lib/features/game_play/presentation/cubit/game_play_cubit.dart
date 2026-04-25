@@ -111,10 +111,7 @@ class GamePlayCubit extends Cubit<GamePlayState> {
   }
 
   void _handleWin(int currentLevel) {
-    // final nextLevel = currentLevel + 1;
-    // if (nextLevel > HiveService.instance.unlockedUpTo) {
       HiveService.instance.unlockNextLevel(currentLevel);
-    // }
     emit(GamePlayVictory(levelNumber: currentLevel));
   }
 }

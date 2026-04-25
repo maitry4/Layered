@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 class LevelPill extends StatelessWidget {
   final int levelNumber;
-  const LevelPill({required this.levelNumber});
+  const LevelPill({super.key, required this.levelNumber});
   @override
   Widget build(BuildContext context) {
     return Container(

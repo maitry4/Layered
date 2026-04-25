@@ -28,7 +28,7 @@ class BottleWidget extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: Opacity(
-                  opacity: 0.75, // 👈 1.0 = fully solid, 0.0 = invisible
+                  opacity: 0.75, // 1.0 = fully solid, 0.0 = invisible
                   child: Image.asset(_emptyBottleAsset, fit: BoxFit.contain),
                 ),
               ),
@@ -68,7 +68,7 @@ class BottleWidget extends StatelessWidget {
                           child: fruit == null
                               ? const SizedBox(key: ValueKey('empty'))
                               : Transform.scale(
-                                  scale: _fruitScale(fruit), // 👈 increase size
+                                  scale: _fruitScale(fruit), // increase size
                                   child: Image.asset(
                                     fruitAsset(fruit),
                                     fit: BoxFit.contain,

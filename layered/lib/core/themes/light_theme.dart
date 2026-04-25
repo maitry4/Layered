@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:layered/core/constants/app_colors.dart';
-
+// TODO: Not every color is coming from the theme file fix that later 
 final ThemeData lightTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,

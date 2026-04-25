@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 class RoundButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
-  const RoundButton({required this.icon, required this.onTap});
+  const RoundButton({super.key, required this.icon, required this.onTap});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

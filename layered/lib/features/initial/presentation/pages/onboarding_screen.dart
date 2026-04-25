@@ -114,7 +114,7 @@ class _OnboardingPage extends StatelessWidget {
         child: Image.asset(
           _assetPath(context),
           fit: BoxFit.fill,
-          errorBuilder: (_, __, ___) => ColoredBox(
+          errorBuilder: (_, _, _) => ColoredBox(
             color: Theme.of(context).colorScheme.surface,
             child: Center(
               child: Icon(

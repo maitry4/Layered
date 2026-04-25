@@ -23,10 +23,10 @@ final appRouter = GoRouter(
         final seen = HiveService.instance.hasSeenOnboarding;
 
         if (seen) {
-          return AppRoutes.gameMap; // or wherever you want
+          return AppRoutes.gameMap;
         }
 
-        return null; // allow onboarding
+        return null; 
       },
       builder: (context, state) => const OnboardingScreen(),
     ),
@@ -38,18 +38,18 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.gamePlay,
       name: AppRoutes.gamePlay,
-      // redirect: (context, state) {
-      //   final level =
-      //       int.tryParse(state.uri.queryParameters['level'] ?? '') ?? 1;
+      redirect: (context, state) {
+        final level =
+            int.tryParse(state.uri.queryParameters['level'] ?? '') ?? 1;
 
-      //   final unlocked = HiveService.instance.unlockedUpTo;
+        final unlocked = HiveService.instance.unlockedUpTo;
 
-      //   if (level > unlocked) {
-      //     return '${AppRoutes.gamePlay}?level=$unlocked';
-      //   }
+        if (level > unlocked) {
+          return '${AppRoutes.gamePlay}?level=$unlocked';
+        }
 
-      //   return null; // allow navigation
-      // },
+        return null;
+      },
       builder: (context, state) {
         final level =
             int.tryParse(state.uri.queryParameters['level'] ?? '') ?? 1;

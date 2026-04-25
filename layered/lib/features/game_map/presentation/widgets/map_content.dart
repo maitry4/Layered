@@ -1,10 +1,7 @@
-// map_content.dart
-
 import 'package:flutter/material.dart';
 import 'package:layered/core/responsive/responsive_config.dart';
 import 'package:layered/features/game_map/presentation/constants/map_slot_positions.dart';
 import 'package:layered/features/game_map/presentation/widgets/level_bottle.dart';
-import 'package:layered/features/game_play/presentation/widgets/action_button.dart';
 import 'package:layered/features/game_play/presentation/widgets/level_pill.dart';
 
 class MapContent extends StatefulWidget {

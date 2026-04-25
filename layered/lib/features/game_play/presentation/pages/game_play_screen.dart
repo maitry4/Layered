@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:layered/core/responsive/responsive_config.dart';
 import 'package:layered/core/router/app_routes.dart';
-import 'package:layered/core/services/hive_service.dart';
 import 'package:layered/features/game_play/presentation/cubit/game_play_cubit.dart';
 import 'package:layered/features/game_play/presentation/widgets/action_button.dart';
 import 'package:layered/features/game_play/presentation/widgets/game_play_board.dart';
@@ -145,7 +144,7 @@ class GamePlayScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // 🍊 Orange Image (floating on top)
+                  // Orange Image (floating on top)
                   Positioned(
                     top: 0,
                     child: Image.asset(
