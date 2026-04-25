@@ -18,7 +18,7 @@ class GamePlayBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = Responsive.isMobile(context);
-    final crossAxisCount = isMobile ? 4 : 6;
+    final crossAxisCount = isMobile ? 3 : 6;
 
     return SafeArea(
       child: Column(
@@ -51,7 +51,7 @@ class GamePlayBoard extends StatelessWidget {
                 itemCount: level.tubes.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: crossAxisCount,
-                  mainAxisExtent: isMobile?240:350,
+                  mainAxisExtent: isMobile?190:350,
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
                   childAspectRatio: 0.5, 

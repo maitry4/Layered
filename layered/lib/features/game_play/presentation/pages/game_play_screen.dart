@@ -24,25 +24,39 @@ class GamePlayScreen extends StatelessWidget {
           },
           child: BlocBuilder<GamePlayCubit, GamePlayState>(
             builder: (context, state) {
-              return Stack(
-                children: [
-                  Positioned.fill(
-                    child: Image.asset(
-                      _backgroundAsset(context),
-                      fit: BoxFit.cover,
+              return TweenAnimationBuilder<double>(
+                duration: const Duration(milliseconds: 2000),
+                tween: Tween(begin: 1.1, end: 1.0),
+                builder: (context, scale, child) {
+                  return Transform.scale(scale: scale, child: child);
+                },
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Image.asset(
+                        _backgroundAsset(context),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  switch (state) {
-                    GamePlayLoading() => const Center(
-                        child: CircularProgressIndicator(color: Colors.white)),
-                    GamePlayLoaded(:final level, :final selectedTubeIndex) =>
-                      GamePlayBoard(level: level, selectedIdx: selectedTubeIndex),
-                    GamePlayVictory() => const SizedBox.shrink(),
-                    GamePlayError(:final message) => Center(
-                        child: Text(message,
-                            style: const TextStyle(color: Colors.white))),
-                  },
-                ],
+                    switch (state) {
+                      GamePlayLoading() => const Center(
+                        child: CircularProgressIndicator(color: Colors.white),
+                      ),
+                      GamePlayLoaded(:final level, :final selectedTubeIndex) =>
+                        GamePlayBoard(
+                          level: level,
+                          selectedIdx: selectedTubeIndex,
+                        ),
+                      GamePlayVictory() => const SizedBox.shrink(),
+                      GamePlayError(:final message) => Center(
+                        child: Text(
+                          message,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    },
+                  ],
+                ),
               );
             },
           ),
@@ -60,10 +74,10 @@ class GamePlayScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              context.go(AppRoutes.gameMap); 
+              context.go(AppRoutes.gameMap);
             },
             child: const Text("Next Level"),
-          )
+          ),
         ],
       ),
     );

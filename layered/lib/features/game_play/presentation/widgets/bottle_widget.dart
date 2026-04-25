@@ -5,13 +5,10 @@ import 'package:layered/features/game_play/presentation/widgets/fruit_assets.dar
 class BottleWidget extends StatelessWidget {
   final Tube tube;
   final bool isSelected;
+
   static const String _emptyBottleAsset = 'assets/play/empty_bottle_image.webp';
 
-  const BottleWidget({
-    super.key, 
-    required this.tube, 
-    this.isSelected = false,
-  });
+  const BottleWidget({super.key, required this.tube, this.isSelected = false});
 
   @override
   Widget build(BuildContext context) {
@@ -20,47 +17,69 @@ class BottleWidget extends StatelessWidget {
         final slotSpacing = constraints.maxHeight * 0.01;
 
         return AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-          // Lift the bottle up if selected
-          transform: Matrix4.translationValues(0, isSelected ? -20 : 0, 0),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutBack,
+          transform: Matrix4.identity()
+            ..translate(0.0, isSelected ? -40.0 : 0.0)
+            ..scale(isSelected ? 1.05 : 1.0),
+
           child: Stack(
             children: [
               Positioned.fill(
-                child: Image.asset(
-                  _emptyBottleAsset,
-                  fit: BoxFit.contain,
+                child: Opacity(
+                  opacity: 0.75, // 👈 1.0 = fully solid, 0.0 = invisible
+                  child: Image.asset(_emptyBottleAsset, fit: BoxFit.contain),
                 ),
               ),
-              Positioned(
-              left: constraints.maxWidth * 0.18,
-              right: constraints.maxWidth * 0.18,
-              bottom: constraints.maxHeight * 0.09,
-              top: constraints.maxHeight * 0.17,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(tube.capacity, (index) {
-                  // 'index' 0 is the top of the Column visually.
-                  // We need to map it so the highest possible slot (capacity - 1) is at the top.
-                  final slotIndex = (tube.capacity - 1) - index;
-                  
-                  final hasSlab = slotIndex < tube.slabs.length;
-                  final fruit = hasSlab ? tube.slabs[slotIndex] : null;
 
-                  return Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: slotSpacing),
-                      child: fruit == null
-                          ? const SizedBox.shrink()
-                          : Image.asset(
-                              fruitAsset(fruit),
-                              fit: BoxFit.contain,
-                            ),
-                    ),
-                  );
-                }),
+              Positioned(
+                left: constraints.maxWidth * 0.10,
+                right: constraints.maxWidth * 0.10,
+                bottom: constraints.maxHeight * 0.05,
+                top: constraints.maxHeight * 0.25,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(tube.capacity, (index) {
+                    final slotIndex = (tube.capacity - 1) - index;
+
+                    final hasSlab = slotIndex < tube.slabs.length;
+                    final fruit = hasSlab ? tube.slabs[slotIndex] : null;
+
+                    return Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: slotSpacing),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 400),
+                          switchInCurve: Curves.easeOut,
+                          switchOutCurve: Curves.easeIn,
+                          transitionBuilder: (child, animation) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: ScaleTransition(
+                                scale: Tween<double>(
+                                  begin: 0.8,
+                                  end: 1.2,
+                                ).animate(animation),
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: fruit == null
+                              ? const SizedBox(key: ValueKey('empty'))
+                              : Transform.scale(
+                                  scale: 1.3, // 👈 increase size
+                                  child: Image.asset(
+                                    fruitAsset(fruit),
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
               ),
-            ),],
+            ],
           ),
         );
       },
