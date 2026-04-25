@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:layered/core/responsive/responsive_config.dart';
 import 'package:layered/core/router/app_routes.dart';
+import 'package:layered/core/services/hive_service.dart';
 import 'package:layered/features/game_play/presentation/cubit/game_play_cubit.dart';
 import 'package:layered/features/game_play/presentation/widgets/action_button.dart';
 import 'package:layered/features/game_play/presentation/widgets/game_play_board.dart';
 import 'package:confetti/confetti.dart';
-import 'package:layered/features/game_play/presentation/widgets/round_button.dart';
 
 class GamePlayScreen extends StatelessWidget {
   final int levelNumber;
@@ -22,11 +22,7 @@ class GamePlayScreen extends StatelessWidget {
         body: BlocListener<GamePlayCubit, GamePlayState>(
           listener: (context, state) {
             if (state is GamePlayVictory) {
-              Future.delayed(const Duration(seconds: 1), () {
-                if (context.mounted) {
-                  _showVictoryDialog(context, state.levelNumber);
-                }
-              });
+              _showVictoryDialog(context, state.levelNumber);
             }
           },
           child: BlocBuilder<GamePlayCubit, GamePlayState>(
@@ -45,6 +41,7 @@ class GamePlayScreen extends StatelessWidget {
                         fit: BoxFit.cover,
                       ),
                     ),
+                    
                     switch (state) {
                       GamePlayLoading() => const Center(
                         child: CircularProgressIndicator(color: Colors.white),

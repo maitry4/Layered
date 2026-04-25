@@ -17,8 +17,8 @@ class GamePlayBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = Responsive.isMobile(context);
-    final crossAxisCount = isMobile ? 3 : 6;
+    // final isMobile = Responsive.isMobile(context);
+    // final crossAxisCount = isMobile ? 3 : 6;
 
     return SafeArea(
       child: Column(
@@ -44,30 +44,47 @@ class GamePlayBoard extends StatelessWidget {
 
           // MIDDLE: BOTTLES
           Expanded(
-            child: Center(
-              child: GridView.builder(
-                shrinkWrap: true,
-                // padding: const EdgeInsets.all(20),
-                itemCount: level.tubes.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  mainAxisExtent: isMobile?190:350,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: 0.5, 
-                  // Matches the elegant bottle height
-                ),
-                itemBuilder: (context, index) => GestureDetector(
-                  onTap: () => context.read<GamePlayCubit>().onTubeTapped(index),
-                  child: BottleWidget(
-                    tube: level.tubes[index],
-                    isSelected: selectedIdx == index,
-                  ),
-                ),
+  child: Center(
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        final isMobile = Responsive.isMobile(context);
+        
+        final crossAxisCount = isMobile ? 5 :level.tubes.length;
+
+        // Control spacing here
+        // const spacing = 2.0;
+
+        // Calculate exact width needed for grid
+        final itemWidth = constraints.maxWidth / crossAxisCount;
+        final gridWidth =
+            (itemWidth * crossAxisCount) - (0.0 * (crossAxisCount - 1));
+
+        return SizedBox(
+          width: gridWidth * 0.8, // 👈 shrink width to center items nicely
+          child: GridView.builder(
+            shrinkWrap: true,
+            itemCount: level.tubes.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              mainAxisExtent: isMobile ? 190 : 350,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 1.0, // 👈 reduced gap
+              childAspectRatio: 0.5,
+            ),
+            itemBuilder: (context, index) => GestureDetector(
+              onTap: () =>
+                  context.read<GamePlayCubit>().onTubeTapped(index),
+              child: BottleWidget(
+                tube: level.tubes[index],
+                isSelected: selectedIdx == index,
               ),
             ),
           ),
-
+        );
+      },
+    ),
+  ),
+),
           // BOTTOM: ACTION BUTTONS
           Padding(
             padding: const EdgeInsets.only(bottom: 40, top: 10),

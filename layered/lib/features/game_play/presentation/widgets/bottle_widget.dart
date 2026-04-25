@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:layered/features/game_play/domain/fruit_type.dart';
 import 'package:layered/features/game_play/domain/tube.dart';
 import 'package:layered/features/game_play/presentation/widgets/fruit_assets.dart';
 
@@ -67,7 +68,7 @@ class BottleWidget extends StatelessWidget {
                           child: fruit == null
                               ? const SizedBox(key: ValueKey('empty'))
                               : Transform.scale(
-                                  scale: 1.3, // 👈 increase size
+                                  scale: _fruitScale(fruit), // 👈 increase size
                                   child: Image.asset(
                                     fruitAsset(fruit),
                                     fit: BoxFit.contain,
@@ -85,4 +86,13 @@ class BottleWidget extends StatelessWidget {
       },
     );
   }
+  double _fruitScale(FruitType fruit) {
+  switch (fruit) {
+    case FruitType.grapes:
+    case FruitType.mango:
+      return 1.6; // slightly smaller
+    default:
+      return 2.0; // normal fruits
+  }
+}
 }
