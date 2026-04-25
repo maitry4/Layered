@@ -17,7 +17,7 @@ class BottleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (_, constraints) {
-        final slotSpacing = constraints.maxHeight * 0.02;
+        final slotSpacing = constraints.maxHeight * 0.01;
 
         return AnimatedContainer(
           duration: const Duration(milliseconds: 200),
@@ -38,7 +38,7 @@ class BottleWidget extends StatelessWidget {
               bottom: constraints.maxHeight * 0.09,
               top: constraints.maxHeight * 0.17,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(tube.capacity, (index) {
                   // 'index' 0 is the top of the Column visually.
                   // We need to map it so the highest possible slot (capacity - 1) is at the top.
