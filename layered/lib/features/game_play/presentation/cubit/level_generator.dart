@@ -15,7 +15,7 @@ class LevelGenerator {
   // Only 1 extra empty tube for most difficulties.
   // High color counts need 2 to keep the puzzle solvable.
   static int _numEmptyTubes(int numColors) {
-    if (numColors >= 7) return 2;
+    if (numColors >= 3) return 2;
     return 1;
   }
 
