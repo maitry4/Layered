@@ -1,5 +1,7 @@
 # 🧩 Layered
 
+**Live Demo:** https://layered-7d3cb.web.app/
+
 A cross-platform puzzle game built with Flutter, designed to demonstrate clean layered architecture and structured state management using BLoC.
 
 Layered challenges players to sort stacked slabs into bottles following strict stacking rules across 100 progressively difficult levels — fully offline.
