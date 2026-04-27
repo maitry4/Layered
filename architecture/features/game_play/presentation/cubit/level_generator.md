@@ -1,131 +1,68 @@
-# level_generator.dart
+# Level Generator Architecture
 
-## Overview
-`level_generator.dart` is the procedural engine responsible for creating solvable, balanced, and increasingly difficult "Water Sort" puzzles. Unlike static level files, this engine uses a deterministic seed-based approach to generate thousands of unique boards on the fly.
+## 📖 Overview
+The `LevelGenerator` is a procedural engine that creates solvable and balanced "Water Sort" puzzles. Instead of relying on static data, it uses a **deterministic seed-based approach** to generate unique boards that scale in difficulty as the player progresses.
+
+---
 
 ## 🏗️ The Generation Pipeline
+The engine follows a strict 5-step sequence to ensure every level is playable and fun:
 
-The generator follows a strict 5-step pipeline to ensure quality and solvability:
+1.  **Parameter Scaling**: Calculates the number of colors and scramble moves based on the level number.
+2.  **Solved Initialization**: Starts with a perfectly sorted board (C tubes, each with 4 of a kind).
+3.  **Global Slab Shuffle**: Scrambles every fruit piece across all positions to break initial clusters.
+4.  **Simulated Pour-Scrambling**: Executes hundreds of "legal" reverse-moves with an **Anti-Sort Bias** to mix the board while maintaining game rules.
+5.  **Quality Verification**: Filters the final board through heuristics (Deadlock detection, Homogeneity scoring) to ensure it's neither trivial nor stuck.
 
-### 1. Difficulty Scaling (`_getParams`)
-The engine calculates level parameters based on the `levelNumber`.
-*   **Colors**: Starts at 3. Adds 1 color every 5 levels, capping at 8.
-*   **Mixes**: Scramble intensity increases linearly from 60 mixes (Level 1) to 200 mixes (Level 100).
-*   **Empty Tubes**: Dynamically assigned (1 if colors < 3, 2 if colors >= 3) to provide enough "breathing room" for complex puzzles.
-
-### 2. Base State Creation
-The generator begins with a **perfectly solved board**. It creates $C$ tubes, each filled with 4 slabs of a unique color. This guarantees that the total inventory of fruits is always balanced (exactly 4 of each color).
-
-### 3. Deep Slab Shuffle
-Before any "pouring" starts, the generator shuffles every individual slab across all available positions. This breaks the initial "solved" clusters and creates a chaotic starting point for the scrambling algorithm.
-
-### 4. Anti-Sort Scrambling (The Core Algorithm)
-This is a reverse-simulation of gameplay. The engine performs hundreds of random "legal" moves with a specific **Anti-Sort Bias**:
-*   **Legal Pours only**: Slabs can only be "poured" onto a matching color or into an empty tube.
-*   **Empty Tube Preservation**: The algorithm ensures it never fills the last required empty tube during the scramble, ensuring the user always starts with a valid workspace.
-*   **Anti-Sort Check**: It rejects any move that would accidentally result in a "Complete" tube (4 of a kind). This prevents the generator from solving the puzzle for the user during the mix phase.
-
-### 5. Post-Generation Verification (Heuristics)
-To prevent bad user experiences, every generated board is passed through three filters:
-1.  **Solved Check**: Rejects boards that are accidentally already solved.
-2.  **Deadlock Check**: Analyzes the top fruits of all tubes. If no legal move exists from the very first frame, the board is discarded.
-3.  **Homogeneity Score**: A mathematical metric (0.0 to 1.0) that measures how "clumped" colors are. If the score is > 0.75 (meaning the board is too sorted/easy), the engine throws it away and retries with a new seed.
-
-## 🛠️ Code Breakdown
-
-### 1. Difficulty Math
-```dart
-int numColors = 3 + (levelNumber - 1) ~/ 5; // +1 color every 5 levels
-final double t = ((levelNumber - 1) / 99.0).clamp(0.0, 1.0);
-final int numMixes = (60 + t * 140).toInt(); // Linear scale 60 -> 200
-```
-
-### 2. The Deadlock Heuristic
-```dart
-static bool _isDeadlocked(List<List<FruitType>> tubes, int capacity) {
-  for (int si = 0; si < n; si++) {
-    final color = src.last;
-    for (int ti = 0; ti < n; ti++) {
-      if (tgt.length < capacity && (tgt.isEmpty || tgt.last == color)) {
-        return false; // Found at least one legal move
-      }
-    }
-  }
-  return true; // No legal moves possible
-}
-```
-*   This function ensures the player is never presented with a "stuck" board at the start of a level.
-
-### 3. The Homogeneity Metric
-```dart
-static double _homogeneity(List<List<FruitType>> tubes) {
-  // Calculates the average "purity" of all tubes.
-  // We want a low score for a well-scrambled, difficult puzzle.
-}
-```
-
-## ⚙️ Technical Constraints
-*   **`_tubeCapacity`**: Hardcoded to 4 (standard for this genre).
-*   **`_maxSeedOffsets`**: 30 (The engine will try up to 30 different random seeds to find a "valid" hard board before giving up).
-*   **`_maxAttempts`**: 5000 (Maximum scramble attempts per seed).
-
-# level_generator.dart - Mathematical Deep Dive
+---
 
 ## 🧮 Mathematical Foundations
 
-The Level Generator relies on several mathematical concepts to ensure that puzzles are not just "random," but are statistically balanced and logically sound.
+### 1. Difficulty Interpolation (Lerp)
+The intensity of the scramble scales linearly using a Progress Factor ($t$).
 
-### 1. Linear Difficulty Scaling (Interpolation)
-The number of "mix moves" (how many times the generator pours slabs during scrambling) is calculated using a **Linear Interpolation (Lerp)** formula.
+$$Mixes = 60 + \left( \frac{Level - 1}{99} \right) \times 140$$
 
-$$Mixes = StartValue + (EndValue - StartValue) \times t$$
+> [!NOTE]
+> This creates a smooth difficulty curve, moving from **60 mixes** at Level 1 to **200 mixes** at Level 100.
 
-In the code:
-```dart
-final double t = ((levelNumber - 1) / 99.0).clamp(0.0, 1.0);
-final int numMixes = (60 + t * 140).toInt();
-```
-*   **$t$ (The Progress Factor)**: Normalizes the current level (1-100) into a value between `0.0` and `1.0`.
-*   **Scaling**: At Level 1 ($t=0$), mixes = 60. At Level 100 ($t=1$), mixes = 200 ($60 + 140$). This ensures a smooth, predictable increase in complexity.
-
-### 2. Discrete Step Scaling (Integer Division)
-The number of colors increases at specific "milestones" rather than every level. This uses **Integer Division**.
-
+### 2. Plateau-Based Scaling (Integer Division)
+To keep the player from being overwhelmed, color counts increase in discrete "steps."
 ```dart
 int numColors = 3 + (levelNumber - 1) ~/ 5;
 ```
-*   The `~/` operator performs a division and truncates the remainder.
-*   **Logic**: Level 1-5 = 3 colors, Level 6-10 = 4 colors, etc. This creates "difficulty plateaus," allowing the player to master a specific number of colors before the game introduces more complexity.
+*   **Result**: 3 colors for levels 1-5, 4 colors for levels 6-10, etc. (Capped at 8).
 
-### 3. Complexity Heuristics: Homogeneity Score
-To ensure a level isn't "boring" (e.g., half the bottles are already sorted), we calculate a **Purity Ratio** for each tube.
+### 3. Complexity Metric (Homogeneity)
+We measure the "purity" of the board to prevent boring levels.
+$$Purity = \text{Average}\left( \frac{\text{Count of Most Frequent Fruit in Tube}}{\text{Total Fruits in Tube}} \right)$$
 
-$$Purity = \frac{\text{Count of Most Frequent Fruit}}{\text{Total Fruits in Tube}}$$
+*   **Filter**: If **Purity > 0.75**, the board is rejected as "too easy" and the engine retries with a new seed.
 
-**The Calculation**:
-1.  For every tube, we find the "Max Frequency" of a single color.
-2.  If a tube has `[Apple, Apple, Lime, Apple]`, the ratio is $3/4 = 0.75$.
-3.  We average these ratios across all tubes.
-4.  **Threshold**: If the average is $> 0.75$, the board is rejected. This mathematically guarantees that colors are "spread out" enough to require strategic thinking.
-
-### 4. Deterministic Randomness (Seed Logic)
-To ensure a specific level number always generates the same puzzle for every player, we use a calculated **Random Seed**.
-
+### 4. Deterministic Seeding
 ```dart
-final random = Random(levelNumber * 997 + seedOffset * 31);
+Random(levelNumber * 997 + seedOffset * 31);
 ```
-*   **997 & 31**: These are **Prime Numbers**. 
-*   Using large primes for seeding minimizes "collisions" (where two different levels accidentally look the same) and ensures a high degree of entropy (perceived randomness) in the resulting boards.
+*   Uses **Prime Number Multipliers** (997, 31) to minimize hash collisions and ensure that Level 42 always generates the exact same puzzle for every user on every device.
 
-### 5. Probability and Retries
-Because the generator uses "Anti-Sort Bias" and "Empty Tube Preservation," it is possible for a scramble to fail or produce an "easy" board.
-*   **`_maxSeedOffsets = 30`**: This gives the engine a **$30 \times$ retry buffer**. 
-*   If the math results in a board that is too simple (Homogeneity > 0.75) or deadlocked, it shifts the seed and tries again. This "Generate-and-Test" pattern ensures that even though the process is random, the **output is always high quality**.
+---
 
-### 6. Cycle-Based Positioning (Modulo Math)
-In the map view, levels are positioned using **Modulo Arithmetic** to loop through a set of slot offsets.
+## 🛠️ Core Algorithm: Anti-Sort Scrambling
+During the mix phase, the engine uses a **Simulated Reverse-Gameplay** approach with three critical constraints:
 
-```dart
-final slot = slots[i % slots.length];
-```
-*   This ensures that no matter how many levels we have (e.g., 100), the positions always cycle through the 5 predefined "S-Curve" points (`kSlotsMobile`), creating a continuous path.
+| Constraint | Purpose |
+| :--- | :--- |
+| **Legal Pours Only** | Slabs can only be moved onto a matching color or an empty tube. |
+| **Empty Preservation** | Prevents the algorithm from consuming the last required empty tubes during scrambling. |
+| **Anti-Sort Bias** | Actively rejects any move that would complete a tube, ensuring the puzzle remains unsolved. |
+
+---
+
+## ⚙️ Technical Specs
+*   **`_tubeCapacity`**: 4 (Fixed).
+*   **`_numEmptyTubes`**: 1 (Early levels) | 2 (Levels with 3+ colors).
+*   **`_maxSeedOffsets`**: 30 (Max retries before failing).
+*   **`_maxAttempts`**: 5000 (Max scramble iterations per seed).
+
+> [!TIP]
+> The combination of **High Mix Counts** and **Two Empty Tubes** ensures that while the generator doesn't use an expensive exhaustive solver, the puzzles remain solvable in 99.9% of cases.

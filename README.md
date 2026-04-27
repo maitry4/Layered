@@ -71,6 +71,19 @@ This structure enables:
 
 ---
 
+## 🧩 Procedural Level Generation
+
+Layered uses a hybrid procedural generation system to create balanced and playable puzzles.
+
+- Levels are generated dynamically using a combination of **random distribution** and **controlled gameplay-based scrambling**.
+- The system applies only **valid in-game moves** during scrambling, ensuring that generated states remain within the playable space.
+- Additional heuristics such as **deadlock detection** and **homogeneity scoring** are used to filter out trivial or unplayable boards.
+
+> ⚠️ While the generator is not mathematically guaranteed to produce solvable puzzles in all cases, the combination of **controlled scrambling**, **validation heuristics**, and **two empty tubes** makes unsolvable configurations extremely unlikely in practice.
+
+**This design avoids expensive solver-based validation while still maintaining high-quality puzzle generation performance.**
+---
+
 ## 📂 Project Structure
 
 ```
