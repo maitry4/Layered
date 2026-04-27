@@ -42,8 +42,8 @@ class GamePlayScreen extends StatelessWidget {
                     ),
                     
                     switch (state) {
-                      GamePlayLoading() => const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
+                      GamePlayLoading() => Center(
+                        child: CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimary),
                       ),
                       GamePlayLoaded(:final level, :final selectedTubeIndex) =>
                         GamePlayBoard(
@@ -54,7 +54,7 @@ class GamePlayScreen extends StatelessWidget {
                       GamePlayError(:final message) => Center(
                         child: Text(
                           message,
-                          style: const TextStyle(color: Colors.white),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                         ),
                       ),
                     },
@@ -109,7 +109,7 @@ class GamePlayScreen extends StatelessWidget {
                       margin: const EdgeInsets.only(top: 60),
                       padding: const EdgeInsets.fromLTRB(20, 70, 20, 20),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(24),
                       ),
                       child: Column(
@@ -123,9 +123,9 @@ class GamePlayScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          const Text(
+                          Text(
                             "That was smooth...",
-                            style: TextStyle(color: Colors.grey),
+                            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
                           const SizedBox(height: 20),
 

@@ -4,17 +4,20 @@ class LevelPill extends StatelessWidget {
   const LevelPill({super.key, required this.levelNumber});
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: colorScheme.surface.withOpacity(0.9),
         borderRadius: BorderRadius.circular(30),
       ),
       child: Text(
         "Level $levelNumber",
-        style: const TextStyle(
-            fontWeight: FontWeight.w900, fontSize: 24, color: Color(0xFF263238)),
+        style: TextStyle(
+            fontWeight: FontWeight.w900,
+            fontSize: 24,
+            color: colorScheme.inverseSurface),
       ),
     );
   }
-}
+}

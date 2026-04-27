@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:layered/core/constants/app_colors.dart';
-// TODO: Not every color is coming from the theme file fix that later 
 final ThemeData lightTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
@@ -13,17 +12,26 @@ final ThemeData lightTheme = ThemeData(
     onPrimaryContainer: AppColors.green900,
     primaryFixed: AppColors.green500,
     
-    secondary:        AppColors.orange500,
+    secondary:        AppColors.orange700,
     onSecondary:      AppColors.white,
-    secondaryContainer: AppColors.orange100,
+    secondaryContainer: AppColors.orange400,
     onSecondaryContainer: AppColors.orange900,
+
+    tertiary:         AppColors.amber200,
+    onTertiary:       AppColors.brown700,
 
     surface:          AppColors.white,
     onSurface:        AppColors.grey900,
+    onSurfaceVariant: AppColors.grey500,
     surfaceContainerHighest: AppColors.grey100,
+    
+    outline:          AppColors.grey300,
+    shadow:           AppColors.black26,
 
     error:            AppColors.error,
     onError:          AppColors.white,
+
+    inverseSurface:   AppColors.blueGrey900,
   ),
 
   scaffoldBackgroundColor: AppColors.green50,
@@ -81,30 +89,31 @@ final ThemeData lightTheme = ThemeData(
   // ── Typography ───────────────────────────────────────────────────────────────
   textTheme: const TextTheme(
     // Display
-    displayLarge:  TextStyle(fontSize: 57, fontWeight: FontWeight.w700, color: AppColors.grey900, letterSpacing: -0.5),
-    displayMedium: TextStyle(fontSize: 45, fontWeight: FontWeight.w700, color: AppColors.grey900),
-    displaySmall:  TextStyle(fontSize: 36, fontWeight: FontWeight.w600, color: AppColors.grey900),
+    displayLarge:  TextStyle(fontSize: 57, fontWeight: FontWeight.w700, letterSpacing: -0.5),
+    displayMedium: TextStyle(fontSize: 45, fontWeight: FontWeight.w700),
+    displaySmall:  TextStyle(fontSize: 36, fontWeight: FontWeight.w600),
 
     // Headline
-    headlineLarge:  TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: AppColors.grey900),
-    headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: AppColors.grey900),
-    headlineSmall:  TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: AppColors.grey900),
+    headlineLarge:  TextStyle(fontSize: 32, fontWeight: FontWeight.w700),
+    headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+    headlineSmall:  TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
 
     // Title
-    titleLarge:  TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: AppColors.grey900),
-    titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.grey900, letterSpacing: 0.1),
-    titleSmall:  TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.grey900, letterSpacing: 0.1),
+    titleLarge:  TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+    titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.1),
+    titleSmall:  TextStyle(fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.1),
 
     // Body
-    bodyLarge:   TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.grey900, height: 1.5),
-    bodyMedium:  TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: AppColors.grey900, height: 1.5),
-    bodySmall:   TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.grey500, height: 1.4),
+    bodyLarge:   TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5),
+    bodyMedium:  TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.5),
+    bodySmall:   TextStyle(fontSize: 12, fontWeight: FontWeight.w400, height: 1.4),
 
     // Label
-    labelLarge:  TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.grey900, letterSpacing: 0.3),
+    labelLarge:  TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.3),
     labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.grey700, letterSpacing: 0.5),
-    labelSmall:  TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: AppColors.grey500, letterSpacing: 0.5),
+    labelSmall:  TextStyle(fontSize: 10, fontWeight: FontWeight.w500, letterSpacing: 0.5),
   ),
+
 
   // ── Divider ──────────────────────────────────────────────────────────────────
   dividerTheme: const DividerThemeData(
@@ -128,4 +137,4 @@ final ThemeData lightTheme = ThemeData(
     color: AppColors.grey700,
     size:  24,
   ),
-);
+);

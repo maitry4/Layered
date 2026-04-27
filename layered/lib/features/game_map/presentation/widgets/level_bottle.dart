@@ -102,8 +102,8 @@ class _BottleImage extends StatelessWidget {
     return Image.asset(
       isUnlocked ? 'assets/map/unlocked_bottle.webp' : 'assets/map/locked_bottle.webp',
       fit: BoxFit.contain,
-      color: isUnlocked ? null : Colors.white.withOpacity(0.65),
+      color: isUnlocked ? null : Theme.of(context).colorScheme.surface.withOpacity(0.65),
       colorBlendMode: isUnlocked ? null : BlendMode.modulate,
     );
   }
-}
+}

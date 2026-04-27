@@ -5,17 +5,19 @@ class RoundButton extends StatelessWidget {
   const RoundButton({super.key, required this.icon, required this.onTap});
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFE082),
+          color: colorScheme.tertiary,
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 3),
+          border: Border.all(color: colorScheme.onPrimary, width: 3),
         ),
-        child: Icon(icon, color: Colors.brown[700], size: 28),
+        child: Icon(icon, color: colorScheme.onTertiary, size: 28),
       ),
     );
   }
 }
+

@@ -89,7 +89,7 @@ class GamePlayBoard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ActionButton(
-                  child: const Icon(Icons.undo, color: Colors.white, size: 32),
+                  child: Icon(Icons.undo, color: Theme.of(context).colorScheme.onPrimary, size: 32),
                   onTap: () => context.read<GamePlayCubit>().undo(),
                 ),
                 const SizedBox(width: 30),

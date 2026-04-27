@@ -6,25 +6,26 @@ class ActionButton extends StatelessWidget {
   const ActionButton({super.key, this.label, this.child, required this.onTap});
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         constraints: const BoxConstraints(minWidth: 130),
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-              colors: [Color(0xFFFFB74D), Color(0xFFF57C00)]),
+          gradient: LinearGradient(
+              colors: [colorScheme.secondaryContainer, colorScheme.secondary]),
           borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: Colors.white, width: 4),
-          boxShadow: const [
-            BoxShadow(color: Colors.black26, blurRadius: 5, offset: Offset(0, 3))
+          border: Border.all(color: colorScheme.onPrimary, width: 4),
+          boxShadow: [
+            BoxShadow(color: colorScheme.shadow, blurRadius: 5, offset: const Offset(0, 3))
           ],
         ),
         child: Center(
           child: label != null
               ? Text(label!,
-                  style: const TextStyle(
-                      color: Colors.white,
+                  style: TextStyle(
+                      color: colorScheme.onPrimary,
                       fontWeight: FontWeight.w900,
                       fontSize: 20))
               : child,
@@ -32,4 +33,4 @@ class ActionButton extends StatelessWidget {
       ),
     );
   }
-}
+}
