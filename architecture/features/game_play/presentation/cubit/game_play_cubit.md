@@ -7,7 +7,7 @@
 1.  **Level Generation**: Delegates the creation of a new board to `LevelGenerator`.
 2.  **Interaction State**: Tracks which tube is currently selected by the user.
 3.  **Pouring Orchestration**: When two tubes are tapped in sequence, it validates and executes the pour.
-4.  **Undo System**: Maintains a `history` of tube states (`List<List<Tube>>`) to allow players to backtrack.
+4.  **Undo System**: Maintains a `history` of tube states (`List<List<Tube>>`) to allow players to backtrack. The history is limited to the **last 30 moves** to optimize memory usage.
 5.  **Win Condition**: Checks if all tubes are "sorted" (either empty or full and uniform) after every move.
 6.  **Progress Updates**: Calls `HiveService` to unlock the next level upon victory.
 

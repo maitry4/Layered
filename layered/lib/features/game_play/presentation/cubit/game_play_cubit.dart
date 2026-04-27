@@ -74,6 +74,11 @@ class GamePlayCubit extends Cubit<GamePlayState> {
       final updatedHistory = List<List<Tube>>.from(state.history)
         ..add(state.level.tubes);
 
+      // Limit history to last 30 moves to optimize memory
+      if (updatedHistory.length > 30) {
+        updatedHistory.removeAt(0);
+      }
+
       var tempSource = source;
       var tempTarget = target;
 
