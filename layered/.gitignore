@@ -41,3 +41,6 @@ ios/.symlinks/
 # Env
 .env
 .env.*
+# Firebase secret configuration files (do not commit to GitHub)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist

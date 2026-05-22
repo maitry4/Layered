@@ -76,7 +76,11 @@ class _VictoryWidgetState extends State<VictoryWidget> {
               builder: (context, scale, child) {
                 return Transform.scale(scale: scale, child: child);
               },
-              child: Container(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 420, // fixed/max width for large screens
+                ),
+                child: Container(
                 margin: const EdgeInsets.only(top: 60),
                 padding: const EdgeInsets.fromLTRB(20, 75, 20, 24),
                 decoration: BoxDecoration(
@@ -196,7 +200,7 @@ class _VictoryWidgetState extends State<VictoryWidget> {
                     ),
                   ],
                 ),
-              ),
+              ),),
             ),
 
             // Orange Image (floating on top)

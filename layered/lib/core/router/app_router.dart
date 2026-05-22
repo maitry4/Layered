@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:layered/core/router/app_routes.dart';
 import 'package:layered/core/router/error_page.dart';
+import 'package:layered/core/services/analytics_service.dart';
 import 'package:layered/core/services/hive_service.dart';
 import 'package:layered/features/game_map/presentation/pages/game_map_screen.dart';
 import 'package:layered/features/game_play/presentation/pages/game_play_screen.dart';
@@ -10,6 +11,10 @@ import 'package:layered/features/initial/presentation/pages/splash_screen.dart';
 final appRouter = GoRouter(
   initialLocation: AppRoutes.splash,
   errorBuilder: (context, state) => ErrorPage(error: state.error),
+  observers: [
+    if (AnalyticsService.instance.observer != null)
+      AnalyticsService.instance.observer!,
+  ],
   routes: [
     GoRoute(
       path: AppRoutes.splash,

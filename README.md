@@ -44,6 +44,47 @@ Layered challenges players to sort stacked slabs into bottles following strict s
 - **Responsive Design**: Optimized for Android, iOS, Web, and Desktop.
 - **Custom Assets**: Hand-picked Slab and Bottle visuals.
 
+## 📊 Firebase Analytics Integration
+
+This project ships with a minimal Firebase Analytics setup that records key game events:
+
+- `screen_view`
+- `level_unlocked`
+- `first_visit`
+- `page_view`
+- `session_start`
+- `user_engagement`
+
+A custom event parameter **`level_number`** is defined in the Firebase console (under *Custom definitions → Event parameters*).
+
+### How to verify the integration
+
+1. **Run locally** – DebugView will show events instantly. To see normal events, clear the debug flag in the browser console:
+
+   ```js
+   localStorage.removeItem('firebase:debug');
+   location.reload();
+   ```
+
+2. **Deploy a release build**:
+
+   ```bash
+   flutter clean
+   flutter pub get
+   flutter build web --release
+   firebase deploy --only hosting
+   ```
+
+   The release bundle does **not** include the debug flag.
+
+3. **Check the Analytics dashboard** – after a few minutes, open **Analytics → Events** and verify the rows appear. Use the **Explore** tab to break down `level_unlocked` by the custom parameter `level_number`.
+
+### Important notes
+
+- The `firebase:debug` flag lives only in the browser’s local‑storage; remove it before releasing to avoid debug‑only events.
+- Ensure the custom dimension `level_number` exists in the Firebase console; otherwise it won’t be available for reporting.
+
+
 ---
 
 ## 🏗 Architecture

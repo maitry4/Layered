@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:layered/core/router/app_router.dart';
+import 'package:layered/core/services/analytics_service.dart';
 import 'package:layered/core/services/hive_service.dart';
 import 'package:layered/core/themes/light_theme.dart';
 import 'package:layered/features/initial/presentation/cubit/splash_cubit.dart';
@@ -11,6 +12,7 @@ Future<void> main() async {
   usePathUrlStrategy();
 
   await HiveService.init();
+  await AnalyticsService.instance.init();
   runApp(const LayeredApp());
 }
 

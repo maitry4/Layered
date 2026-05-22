@@ -1,4 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:layered/core/services/analytics_service.dart';
 import 'package:layered/core/services/data_migration_service.dart';
 
 /// Central service for all local database operations.
@@ -64,7 +65,10 @@ class HiveService {
   /// Call after a level is completed to unlock the next one.
   Future<void> unlockNextLevel(int completedLevel) async {
     if (completedLevel >= unlockedUpTo) {
+      final nextLevel = completedLevel + 1;
       await _progressBox.put(_kUnlockedUpToKey, completedLevel + 1);
+      // Log the progression event to Firebase Analytics
+      await AnalyticsService.instance.logLevelUnlocked(nextLevel);
     }
   }
 
