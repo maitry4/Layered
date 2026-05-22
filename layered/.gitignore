@@ -37,7 +37,8 @@ ios/.symlinks/
 
 # Firebase
 .firebase/
-
+firebase_options.dart
+google-services.json
 # Env
 .env
 .env.*
