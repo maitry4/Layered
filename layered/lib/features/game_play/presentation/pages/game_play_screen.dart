@@ -4,9 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:layered/core/responsive/responsive_config.dart';
 import 'package:layered/core/router/app_routes.dart';
 import 'package:layered/features/game_play/presentation/cubit/game_play_cubit.dart';
-import 'package:layered/features/game_play/presentation/widgets/action_button.dart';
 import 'package:layered/features/game_play/presentation/widgets/game_play_board.dart';
-import 'package:confetti/confetti.dart';
+import 'package:layered/features/game_play/presentation/widgets/victory_widget.dart';
 
 class GamePlayScreen extends StatelessWidget {
   final int levelNumber;
@@ -69,93 +68,23 @@ class GamePlayScreen extends StatelessWidget {
   }
 
   void _showVictoryDialog(BuildContext context, int currentLevel) {
-    final confettiController = ConfettiController(
-      duration: const Duration(seconds: 3),
-    );
-
-    confettiController.play();
-
     showDialog(
       context: context,
+      barrierColor: Colors.black.withOpacity(0.4),
       barrierDismissible: false,
       builder: (dContext) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  // 🎉 Confetti
-                  Positioned.fill(
-                    child: ConfettiWidget(
-                      confettiController: confettiController,
-                      blastDirectionality: BlastDirectionality.explosive,
-                      shouldLoop: false,
-                      emissionFrequency: 0.05,
-                      numberOfParticles: 20,
-                      gravity: 0.3,
-                    ),
-                  ),
-
-                  // 💫 Main Card
-                  TweenAnimationBuilder<double>(
-                    duration: const Duration(milliseconds: 400),
-                    tween: Tween(begin: 0.8, end: 1.0),
-                    builder: (context, scale, child) {
-                      return Transform.scale(scale: scale, child: child);
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 60),
-                      padding: const EdgeInsets.fromLTRB(20, 70, 20, 20),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            "Level Complete!",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            "That was smooth...",
-                            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
-                          ),
-                          const SizedBox(height: 20),
-
-                          SizedBox(
-                            width: 300,
-                            child: ActionButton(
-                              onTap: () {
-                                confettiController.stop();
-                                context.go(AppRoutes.gameMap);
-                              },
-                              child: const Text("Next Level"),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Orange Image (floating on top)
-                  Positioned(
-                    top: 0,
-                    child: Image.asset(
-                      'assets/play/win_orange.webp',
-                      height: 120,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
+        return VictoryWidget(
+          levelNumber: currentLevel,
+          onMapTap: () {
+            context.go(AppRoutes.gameMap);
+          },
+          onNextLevelTap: () {
+            final nextLevel = currentLevel + 1;
+            context.goNamed(
+              AppRoutes.gamePlay,
+              queryParameters: {'level': nextLevel.toString()},
+            );
+          },
         );
       },
     );
