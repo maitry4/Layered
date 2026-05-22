@@ -78,13 +78,7 @@ class GamePlayScreen extends StatelessWidget {
           onMapTap: () {
             context.go(AppRoutes.gameMap);
           },
-          onNextLevelTap: () {
-            final nextLevel = currentLevel + 1;
-            context.goNamed(
-              AppRoutes.gamePlay,
-              queryParameters: {'level': nextLevel.toString()},
-            );
-          },
+          
         );
       },
     );

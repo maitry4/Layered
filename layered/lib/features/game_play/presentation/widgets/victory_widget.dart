@@ -5,13 +5,11 @@ import 'package:confetti/confetti.dart';
 class VictoryWidget extends StatefulWidget {
   final int levelNumber;
   final VoidCallback onMapTap;
-  final VoidCallback onNextLevelTap;
 
   const VictoryWidget({
     super.key,
     required this.levelNumber,
     required this.onMapTap,
-    required this.onNextLevelTap,
   });
 
   @override
